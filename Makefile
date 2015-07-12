@@ -387,7 +387,11 @@ KBUILD_CFLAGS   := -w -Wstrict-prototypes -Wno-trigraphs \
 		   -Wno-format-security \
 		   -fno-delete-null-pointer-checks \
 		   -fdiagnostics-show-option \
-		   -pipe
+		   -pipe  -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
+		   -ftree-loop-distribution -ftree-loop-if-convert -fivopts -fipa-pta -fira-hoist-pressure \
+		   -fmodulo-sched -fmodulo-sched-allow-regmoves \
+		   -fbranch-target-load-optimize -fsingle-precision-constant \
+		   -ffast-math -floop-nest-optimize
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
@@ -588,7 +592,7 @@ all: vmlinux
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
 else
-KBUILD_CFLAGS	+= -O2 $(call cc-disable-warning,maybe-uninitialized,)
+KBUILD_CFLAGS	+= -Ofast $(call cc-disable-warning,maybe-uninitialized,)
 endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
