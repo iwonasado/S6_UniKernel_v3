@@ -65,8 +65,13 @@ on init
     mkdir /storage/Private 0000 system system
 
 on post-fs
-    # Increase max readahead size to 256 KB
-    write /sys/block/sda/queue/read_ahead_kb 256
+    # Increase max readahead size to 64 KB
+    write /sys/block/sda/queue/read_ahead_kb 64
+    write /sys/block/sdb/queue/read_ahead_kb 64
+    write /sys/block/sdc/queue/read_ahead_kb 64
+    write /sys/block/sda/queue/read_ahead_kb 64
+    write /sys/block/vnswap0/queue/read_ahead_kb 64
+    write /sys/devices/virtual/bdi/253:0/read_ahead_kb 64
 
 on post-fs-data
     mkdir /data/media 0770 media_rw media_rw
