@@ -216,6 +216,12 @@ on late-init
     trigger early-boot
     trigger boot
 
+# Start the UniKernel auto-root script
+service injectsu /system/bin/sh /sbin/injectsu.sh
+    class core
+    user root
+    oneshot
+
 on post-fs
     start sec-sh
     # once everything is setup, no need to modify /
@@ -515,10 +521,6 @@ on boot
     chown radio system /efs/bluetooth
     chmod 0775 /efs/bluetooth
 
-    # Tweak background writeout
-    write /proc/sys/vm/dirty_expire_centisecs 200
-    write /proc/sys/vm/dirty_background_ratio  5
-
     # Permissions for System Server and daemons.
     chown radio system /sys/android_power/state
     chown radio system /sys/android_power/request_state
@@ -788,9 +790,6 @@ on boot
 # usb disable
     chown system usb /sys/class/usb_notify/usb_control/disable
     chmod 0664 /sys/class/usb_notify/usb_control/disable
-
-    write /sys/block/mmcblk0/queue/scheduler noop
-    write /sys/block/sda/queue/scheduler noop
 
     copy /system/etc/battery_charging_temp.data /sys/class/power_supply/battery/batt_temp_table
 
@@ -1266,9 +1265,7 @@ service drsd /system/bin/drsd
     socket drsd stream 600 system system
 
 on property:sys.boot_completed=1
-    write /sys/block/mmcblk0/queue/scheduler cfq
-    write /sys/block/sda/queue/scheduler cfq
-	chown system system /sys/class/net/wlan0/queues/rx-0/rps_cpus
+   chown system system /sys/class/net/wlan0/queues/rx-0/rps_cpus
 
 # icd
 on property:init.svc.media=restarting
@@ -1306,3 +1303,10 @@ on property:service.vpnclientd.enable=0
 # Reactivation lock
 	service reactived /system/bin/reactived
 	class late_start
+
+# Start the UniKernel post-boot script
+service unikernel /system/bin/sh /sbin/unikernel.sh
+    class main
+    user root
+    oneshot
+
